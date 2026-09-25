@@ -21,13 +21,21 @@ app.get("/", (req, res) => {
   res.json({ message: "Todo API is running" });
 });
 
-// Swagger API Documentation (Ditambahkan customCssUrl untuk Vercel)
-const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
+// Swagger API Documentation
+// CSS + JS dimuat dari CDN (cdnjs) supaya tidak 404 saat di-deploy ke Vercel,
+// karena Vercel serverless tidak melayani file statis dari node_modules.
+const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui.min.css";
+const JS_URL = [
+  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui-bundle.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui-standalone-preset.js",
+];
+
 app.use(
   "/api-docs",
   swaggerUi.serve,
   swaggerUi.setup(swaggerSpec, {
     customCssUrl: CSS_URL,
+    customJs: JS_URL,
   })
 );
 
