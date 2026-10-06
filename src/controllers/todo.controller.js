@@ -1,6 +1,7 @@
 const todoService = require("../services/todo.service");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
+const ActivityLog = require('../models/activityLog.model'); // Ditambahkan di sini
 
 const createTodo = catchAsync(async (req, res, next) => {
   const { title, description } = req.body;
@@ -9,6 +10,15 @@ const createTodo = catchAsync(async (req, res, next) => {
     title,
     description,
     owner: req.user._id,
+  });
+
+  // Dicatat ke Activity Log saat membuat todo
+  await ActivityLog.create({
+    action: "CREATE_TODO",
+    todo_id: todo._id,
+    user_id: req.user._id,
+    snapshot: { title: todo.title },
+    created_at: new Date()
   });
 
   res.status(201).json({
@@ -74,6 +84,15 @@ const updateTodo = catchAsync(async (req, res, next) => {
 
   const updatedTodo = await todoService.updateTodo(id, { title, description, completed });
 
+  // Dicatat ke Activity Log saat mengupdate todo
+  await ActivityLog.create({
+    action: "UPDATE_TODO",
+    todo_id: updatedTodo._id,
+    user_id: req.user._id,
+    snapshot: { title: updatedTodo.title },
+    created_at: new Date()
+  });
+
   res.status(200).json({
     success: true,
     message: "Todo updated successfully",
@@ -97,6 +116,15 @@ const deleteTodo = catchAsync(async (req, res, next) => {
   }
 
   await todoService.deleteTodo(id);
+
+  // Dicatat ke Activity Log saat menghapus todo (sesuai request penguji)
+  await ActivityLog.create({
+    action: "DELETE_TODO",
+    todo_id: existingTodo._id,
+    user_id: req.user._id,
+    snapshot: { title: existingTodo.title },
+    created_at: new Date()
+  });
 
   res.status(200).json({
     success: true,
