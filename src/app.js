@@ -5,6 +5,7 @@ const swaggerSpec = require("./config/swagger");
 const todoRoutes = require("./routes/todo.routes");
 const authRoutes = require("./routes/auth.routes");
 const statsRoutes = require("./routes/stats.routes");
+const activityLogRoutes = require("./routes/activityLog.routes"); // <-- TAMBAHAN: Import route activity log
 const logger = require("./middlewares/logger.middleware");
 const notFound = require("./middlewares/notFound.middleware");
 const errorHandler = require("./middlewares/errorHandler.middleware");
@@ -43,6 +44,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/todos", todoRoutes);
 app.use("/api/stats", statsRoutes);
+app.use("/api", activityLogRoutes); // <-- TAMBAHAN: Daftarkan route activity log
 
 // Error handling
 app.use(notFound);
