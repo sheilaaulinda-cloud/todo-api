@@ -5,7 +5,7 @@ const swaggerSpec = require("./config/swagger");
 const todoRoutes = require("./routes/todo.routes");
 const authRoutes = require("./routes/auth.routes");
 const statsRoutes = require("./routes/stats.routes");
-const activityLogRoutes = require("./routes/activityLog.routes"); // <-- TAMBAHAN: Import route activity log
+const activityLogRoutes = require("./routes/activityLog.routes"); // Import route activity log
 const logger = require("./middlewares/logger.middleware");
 const notFound = require("./middlewares/notFound.middleware");
 const errorHandler = require("./middlewares/errorHandler.middleware");
@@ -23,8 +23,6 @@ app.get("/", (req, res) => {
 });
 
 // Swagger API Documentation
-// CSS + JS dimuat dari CDN (cdnjs) supaya tidak 404 saat di-deploy ke Vercel,
-// karena Vercel serverless tidak melayani file statis dari node_modules.
 const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui.min.css";
 const JS_URL = [
   "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui-bundle.js",
@@ -44,7 +42,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/todos", todoRoutes);
 app.use("/api/stats", statsRoutes);
-app.use("/api", activityLogRoutes); // <-- TAMBAHAN: Daftarkan route activity log
+app.use("/api/activity-logs", activityLogRoutes); // <-- Diubah menjadi /api/activity-logs agar pas
 
 // Error handling
 app.use(notFound);

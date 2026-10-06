@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { getActivityLogs } = require('../controllers/activityLog.controller');
-// const { protect } = require('../middlewares/auth.middleware'); // Uncomment jika butuh proteksi login
+// const { protect } = require('../middlewares/auth.middleware');
 
-// Endpoint untuk GET activity logs
-router.get('/activity-logs', getActivityLogs);
+// Karena di app.js nanti kita pasang di /api/activity-logs, maka cukup root (/)
+router.get('/', getActivityLogs);
 
 module.exports = router;
