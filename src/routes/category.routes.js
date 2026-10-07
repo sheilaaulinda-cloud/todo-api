@@ -59,7 +59,7 @@ router.route("/")
  *       content:
  *         application/json:
  *           schema:
- *           type: object
+ *             type: object
  *             properties:
  *               name:
  *                 type: string
