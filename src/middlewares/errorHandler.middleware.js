@@ -25,12 +25,18 @@ function errorHandler(err, req, res, next) {
     message = `Duplicate value for field: ${field}`;
   }
 
-  res.status(statusCode).json({
+  // Struktur response dasar
+  const response = {
     success: false,
     message,
-    // Stack trace hanya ditampilkan saat development, jangan di production
-    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
-  });
+  };
+
+  // Stack trace HANYA disertakan jika berada di mode development
+  if (process.env.NODE_ENV === "development") {
+    response.stack = err.stack;
+  }
+
+  res.status(statusCode).json(response);
 }
 
 module.exports = errorHandler;

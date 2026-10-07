@@ -29,8 +29,8 @@ const createTodo = catchAsync(async (req, res, next) => {
 });
 
 const getAllTodos = catchAsync(async (req, res, next) => {
-  const { page, limit, completed, sortBy, order } = req.query;
-  const queryOptions = { page, limit, completed, sortBy, order };
+  const { page, limit, completed, sortBy, order, search } = req.query;
+  const queryOptions = { page, limit, completed, sortBy, order, search };
 
   const result =
     req.user.role === "admin"

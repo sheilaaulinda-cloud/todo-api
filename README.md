@@ -150,6 +150,11 @@ Dokumentasi interaktif tersedia di `http://localhost:3000/api-docs` setelah serv
 
 Untuk detail lengkap tiap endpoint (skema request/response, contoh, dan kemungkinan error), lihat dokumentasi Swagger di atas.
 
+## Authentication & API Key
+- Untuk mengakses endpoint yang dilindungi, gunakan **Bearer Token** (JWT) pada header `Authorization`.
+- Beberapa endpoint publik/tertentu juga memerlukan **API Key** yang dikirimkan melalui header dengan format:
+  - `x-api-key: <masukkan_api_key_anda>`
+
 ## Lisensi
 
 Project ini dirilis di bawah lisensi **MIT License**.
