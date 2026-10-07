@@ -44,6 +44,15 @@ const options = {
             updatedAt: { type: "string", format: "date-time" },
           },
         },
+        Category: {
+          type: "object",
+          properties: {
+            _id: { type: "string", example: "665f1c2e8b1e2a1a2c3d4e5f" },
+            name: { type: "string", example: "Pekerjaan Rumah" },
+            createdAt: { type: "string", format: "date-time" },
+            updatedAt: { type: "string", format: "date-time" },
+          },
+        },
       },
     },
   },
@@ -54,4 +63,3 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 module.exports = swaggerSpec;
-
