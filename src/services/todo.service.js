@@ -4,19 +4,28 @@ async function createTodo(data) {
   const todo = new Todo({
     title: data.title,
     description: data.description,
+    category: data.category, // ---> Tambahkan ini agar category tersimpan
     owner: data.owner,
   });
   return await todo.save();
 }
 
 async function getAllTodos(ownerId, queryOptions) {
-  const { page = 1, limit = 10, completed, sortBy = "createdAt", order = "desc" } = queryOptions;
+  const { page = 1, limit = 10, completed, sortBy = "createdAt", order = "desc", search } = queryOptions;
 
   const filter = { owner: ownerId };
 
   // Filter berdasarkan status completed, hanya jika parameter dikirim
   if (completed !== undefined) {
     filter.completed = completed === "true";
+  }
+
+  // ---> Tambahkan filter pencarian (search) berdasarkan title atau description
+  if (search) {
+    filter.$or = [
+      { title: { $regex: search, $options: "i" } },
+      { description: { $regex: search, $options: "i" } },
+    ];
   }
 
   const sortDirection = order === "asc" ? 1 : -1;
@@ -26,7 +35,8 @@ async function getAllTodos(ownerId, queryOptions) {
     Todo.find(filter)
       .sort({ [sortBy]: sortDirection })
       .skip(skip)
-      .limit(Number(limit)),
+      .limit(Number(limit))
+      .populate("category", "name"), // Opsional: agar data category ikut ter-populate jika berupa relasi
     Todo.countDocuments(filter),
   ]);
 
@@ -44,12 +54,20 @@ async function getAllTodos(ownerId, queryOptions) {
 }
 
 async function getAllTodosForAdmin(queryOptions) {
-  const { page = 1, limit = 10, completed, sortBy = "createdAt", order = "desc" } = queryOptions;
+  const { page = 1, limit = 10, completed, sortBy = "createdAt", order = "desc", search } = queryOptions;
 
   const filter = {};
 
   if (completed !== undefined) {
     filter.completed = completed === "true";
+  }
+
+  // ---> Tambahkan filter pencarian untuk admin juga
+  if (search) {
+    filter.$or = [
+      { title: { $regex: search, $options: "i" } },
+      { description: { $regex: search, $options: "i" } },
+    ];
   }
 
   const sortDirection = order === "asc" ? 1 : -1;
@@ -60,7 +78,8 @@ async function getAllTodosForAdmin(queryOptions) {
       .sort({ [sortBy]: sortDirection })
       .skip(skip)
       .limit(Number(limit))
-      .populate("owner", "name email"),
+      .populate("owner", "name email")
+      .populate("category", "name"),
     Todo.countDocuments(filter),
   ]);
 
@@ -78,7 +97,9 @@ async function getAllTodosForAdmin(queryOptions) {
 }
 
 async function getTodoById(id) {
-  return await Todo.findById(id);
+  return await Todo.findById(id)
+    .populate("owner", "name email")
+    .populate("category", "name");
 }
 
 async function updateTodo(id, data) {
@@ -88,6 +109,8 @@ async function updateTodo(id, data) {
       title: data.title,
       description: data.description,
       completed: data.completed,
+      category: data.category,     // ---> Tambahkan ini
+      updated_by: data.updated_by, // ---> Tambahkan ini agar updated_by tercatat
     },
     { new: true, runValidators: true }
   );
