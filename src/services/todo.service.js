@@ -4,8 +4,9 @@ async function createTodo(data) {
   const todo = new Todo({
     title: data.title,
     description: data.description,
-    category: data.category, // ---> Tambahkan ini agar category tersimpan
-    owner: data.owner,
+    category: data.category || null,
+    created_by: data.owner, // Dipetakan ke created_by/owner
+    owner: data.owner,      // Sesuai field schema kamu
   });
   return await todo.save();
 }
@@ -15,12 +16,10 @@ async function getAllTodos(ownerId, queryOptions) {
 
   const filter = { owner: ownerId };
 
-  // Filter berdasarkan status completed, hanya jika parameter dikirim
   if (completed !== undefined) {
     filter.completed = completed === "true";
   }
 
-  // ---> Tambahkan filter pencarian (search) berdasarkan title atau description
   if (search) {
     filter.$or = [
       { title: { $regex: search, $options: "i" } },
@@ -36,7 +35,7 @@ async function getAllTodos(ownerId, queryOptions) {
       .sort({ [sortBy]: sortDirection })
       .skip(skip)
       .limit(Number(limit))
-      .populate("category", "name"), // Opsional: agar data category ikut ter-populate jika berupa relasi
+      .populate("category", "name"),
     Todo.countDocuments(filter),
   ]);
 
@@ -62,7 +61,6 @@ async function getAllTodosForAdmin(queryOptions) {
     filter.completed = completed === "true";
   }
 
-  // ---> Tambahkan filter pencarian untuk admin juga
   if (search) {
     filter.$or = [
       { title: { $regex: search, $options: "i" } },
@@ -109,8 +107,8 @@ async function updateTodo(id, data) {
       title: data.title,
       description: data.description,
       completed: data.completed,
-      category: data.category,     // ---> Tambahkan ini
-      updated_by: data.updated_by, // ---> Tambahkan ini agar updated_by tercatat
+      category: data.category,
+      updated_by: data.updated_by,
     },
     { new: true, runValidators: true }
   );
@@ -120,14 +118,6 @@ async function deleteTodo(id) {
   return await Todo.findByIdAndDelete(id);
 }
 
-async function getSummaryStats() {
-  const totalTodos = await Todo.countDocuments();
-  const completedTodos = await Todo.countDocuments({ completed: true });
-  const pendingTodos = totalTodos - completedTodos;
-
-  return { totalTodos, completedTodos, pendingTodos };
-}
-
 module.exports = {
   createTodo,
   getAllTodos,
@@ -135,5 +125,4 @@ module.exports = {
   getTodoById,
   updateTodo,
   deleteTodo,
-  getSummaryStats,
 };

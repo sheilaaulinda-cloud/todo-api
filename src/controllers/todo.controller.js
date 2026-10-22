@@ -4,17 +4,15 @@ const catchAsync = require("../utils/catchAsync");
 const ActivityLog = require('../models/activityLog.model');
 
 const createTodo = catchAsync(async (req, res, next) => {
-  // Tambahkan 'category' di sini agar ikut tertangkap dari request body
   const { title, description, category } = req.body;
 
   const todo = await todoService.createTodo({
     title,
     description,
-    category, // Teruskan category ke service
-    owner: req.user._id,
+    category: category || null,
+    owner: req.user._id, // atau created_by
   });
 
-  // Dicatat ke Activity Log saat membuat todo
   await ActivityLog.create({
     action: "CREATE_TODO",
     todo_id: todo._id,
@@ -55,7 +53,6 @@ const getTodoById = catchAsync(async (req, res, next) => {
     return next(new AppError("Todo not found", 404));
   }
 
-  // Safe check optional chaining untuk mencegah error toString jika owner null/undefined
   const isOwner = todo.owner?._id 
     ? todo.owner._id.toString() === req.user._id.toString()
     : todo.owner?.toString() === req.user._id.toString();
@@ -73,7 +70,7 @@ const getTodoById = catchAsync(async (req, res, next) => {
 
 const updateTodo = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const { title, description, completed, category } = req.body; // Tambahkan category
+  const { title, description, completed, category } = req.body;
 
   const existingTodo = await todoService.getTodoById(id);
 
@@ -94,10 +91,9 @@ const updateTodo = catchAsync(async (req, res, next) => {
     description, 
     completed, 
     category,
-    updated_by: req.user._id // Pastikan updated_by ikut terupdate jika schema-nya ada
+    updated_by: req.user._id 
   });
 
-  // Dicatat ke Activity Log saat mengupdate todo
   await ActivityLog.create({
     action: "UPDATE_TODO",
     todo_id: updatedTodo._id,
@@ -132,7 +128,6 @@ const deleteTodo = catchAsync(async (req, res, next) => {
 
   await todoService.deleteTodo(id);
 
-  // Dicatat ke Activity Log saat menghapus todo
   await ActivityLog.create({
     action: "DELETE_TODO",
     todo_id: existingTodo._id,

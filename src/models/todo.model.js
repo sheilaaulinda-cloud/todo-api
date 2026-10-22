@@ -15,16 +15,15 @@ const todoSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    categoryId: {
+    category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: false,
+      default: null,
     },
-  
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: false,
+      required: true, // Wajib ada sesuai catatan perbaikan
     },
     updated_by: {
       type: mongoose.Schema.Types.ObjectId,
@@ -35,7 +34,6 @@ const todoSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    
   },
   {
     timestamps: true,
