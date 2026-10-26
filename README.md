@@ -1,6 +1,7 @@
 # Todo List API
 
 API backend untuk aplikasi Todo List, dibangun sebagai boilerplate belajar backend Node.js: struktur folder Controller-Service-Model, middleware, autentikasi JWT, proteksi API Key, validasi input, pagination, automated testing, dan dokumentasi Swagger.
+
 ![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=nodedotjs&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/-MongoDB-4DB33D?style=flat&logo=mongodb&logoColor=FFFFFF)
@@ -43,19 +44,18 @@ API backend untuk aplikasi Todo List, dibangun sebagai boilerplate belajar backe
 
 ## Struktur Project
 
-```
 src/
-├── config/ # Koneksi database & konfigurasi Swagger
-├── middlewares/ # Logger, auth, error handler, validasi, dll
-├── validators/ # Aturan validasi input per resource
-├── models/ # Schema Mongoose
-├── services/ # Business logic
-├── controllers/ # Penghubung HTTP request/response ke service
-├── routes/ # Definisi endpoint
-├── utils/ # AppError, catchAsync
-├── app.js # Konfigurasi Express
-└── server.js # Entry point aplikasi
-```
+├── config/             # Koneksi database & konfigurasi Swagger
+├── middlewares/        # Logger, auth, error handler, validasi, dll
+├── validators/         # Aturan validasi input per resource
+├── models/             # Schema Mongoose
+├── services/           # Business logic
+├── controllers/        # Penghubung HTTP request/response ke service
+├── routes/             # Definisi endpoint
+├── utils/              # AppError, catchAsync
+├── app.js              # Konfigurasi Express
+└── server.js           # Entry point aplikasi
+
 
 ## Persyaratan
 
@@ -85,49 +85,50 @@ Sistem operasi yang didukung:
 
 ## Instalasi
 
-```bash
+bash
 git clone https://github.com/username-kamu/todo-api.git
 cd todo-api
 npm install
-```
+
 
 ## Environment Variables
 
 Salin file `.env.example` menjadi `.env`, lalu sesuaikan nilainya:
 
-```bash
+bash
 cp .env.example .env
-```
 
-| Variable           | Wajib | Contoh Nilai                            | Keterangan                                                    |
-| ------------------ | ----- | --------------------------------------- | ------------------------------------------------------------- |
-| `PORT`             | Tidak | `3000`                                  | Port server, default `3000` jika tidak diisi                  |
-| `MONGODB_URI`      | Ya    | `mongodb://127.0.0.1:27017/todo_api_db` | Connection string MongoDB                                     |
-| `NODE_ENV`         | Ya    | `development` / `test` / `production`   | Menentukan mode aplikasi berjalan (lihat penjelasan di bawah) |
-| `JWT_SECRET`       | Ya    | string acak & panjang                   | Kunci rahasia untuk menandatangani token JWT                  |
-| `JWT_EXPIRES_IN`   | Ya    | `1d`                                    | Masa berlaku token JWT                                        |
-| `EXTERNAL_API_KEY` | Ya    | string acak & panjang                   | Kunci akses untuk endpoint `/api/stats`                       |
+
+| Variable          | Wajib | Contoh Nilai / Format Value                         | Keterangan                                                    |
+| ----------------- | ----- | --------------------------------------------------- | ------------------------------------------------------------- |
+| `PORT`            | Tidak | `3000`                                              | Port server, default `3000` jika tidak diisi                  |
+| `MONGODB_URI`     | Ya    | `mongodb+srv://...`                                 | Connection string MongoDB Atlas / lokal                       |
+| `NODE_ENV`        | Ya    | `development` / `test` / `production`               | Menentukan mode aplikasi berjalan                             |
+| `JWT_SECRET`      | Ya    | `rahasia-jwt-yang-sangat-panjang`                   | Kunci rahasia untuk menandatangani token JWT                  |
+| `JWT_EXPIRES_IN`  | Ya    | `1d`                                                | Masa berlaku token JWT                                        |
+| `EXTERNAL_API_KEY`| Ya    | `7f3a1c9e2b8d4f6a0c1e9b7d3f5a8c2e...`               | Kunci akses rahasia (API Key) untuk endpoint `/api/stats`     |
+
+> **Catatan untuk `EXTERNAL_API_KEY`:** 
+> Nilai ini berfungsi sebagai pengaman khusus (*machine-to-machine*). Saat mengakses endpoint statistik (`GET /api/stats/summary`), Anda wajib menyertakan nilai tersebut di dalam Header HTTP dengan nama header `x-api-key`.
 
 ## Menjalankan Project
 
-```bash
+bash
 
-# Mode development (auto-restart saat ada perubahan kode)
-
+Mode development (auto-restart saat ada perubahan kode)
 npm run dev
 
-# Mode production
-
+Mode production
 npm start
-```
+
 
 Server berjalan di `http://localhost:3000` (atau sesuai `PORT` yang diisi di `.env`).
 
 ## Menjalankan Test
 
-```bash
+bash
 npm test
-```
+
 
 Test memakai `mongodb-memory-server`, jadi tidak akan menyentuh database development sungguhan.
 
