@@ -5,16 +5,16 @@ async function createTodo(data) {
     title: data.title,
     description: data.description,
     category: data.category || null,
-    created_by: data.owner, // Dipetakan ke created_by/owner
-    owner: data.owner,      // Sesuai field schema kamu
+    created_by: data.created_by, // Menggunakan created_by sesuai schema model
   });
   return await todo.save();
 }
 
-async function getAllTodos(ownerId, queryOptions) {
+async function getAllTodos(userId, queryOptions) {
   const { page = 1, limit = 10, completed, sortBy = "createdAt", order = "desc", search } = queryOptions;
 
-  const filter = { owner: ownerId };
+  // Ubah dari 'owner' ke 'created_by' agar sesuai schema
+  const filter = { created_by: userId };
 
   if (completed !== undefined) {
     filter.completed = completed === "true";
@@ -76,7 +76,7 @@ async function getAllTodosForAdmin(queryOptions) {
       .sort({ [sortBy]: sortDirection })
       .skip(skip)
       .limit(Number(limit))
-      .populate("owner", "name email")
+      .populate("created_by", "name email") // Ubah populate 'owner' ke 'created_by'
       .populate("category", "name"),
     Todo.countDocuments(filter),
   ]);
@@ -96,7 +96,7 @@ async function getAllTodosForAdmin(queryOptions) {
 
 async function getTodoById(id) {
   return await Todo.findById(id)
-    .populate("owner", "name email")
+    .populate("created_by", "name email") // Ubah populate 'owner' ke 'created_by'
     .populate("category", "name");
 }
 

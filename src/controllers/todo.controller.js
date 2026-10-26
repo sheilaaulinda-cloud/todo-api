@@ -10,7 +10,7 @@ const createTodo = catchAsync(async (req, res, next) => {
     title,
     description,
     category: category || null,
-    owner: req.user._id, // atau created_by
+    created_by: req.user._id, // Diselaraskan dengan skema model
   });
 
   await ActivityLog.create({
@@ -53,9 +53,9 @@ const getTodoById = catchAsync(async (req, res, next) => {
     return next(new AppError("Todo not found", 404));
   }
 
-  const isOwner = todo.owner?._id 
-    ? todo.owner._id.toString() === req.user._id.toString()
-    : todo.owner?.toString() === req.user._id.toString();
+  const isOwner = todo.created_by?._id 
+    ? todo.created_by._id.toString() === req.user._id.toString()
+    : todo.created_by?.toString() === req.user._id.toString();
 
   if (!isOwner && req.user.role !== "admin") {
     return next(new AppError("You do not have permission to access this todo", 403));
@@ -78,9 +78,9 @@ const updateTodo = catchAsync(async (req, res, next) => {
     return next(new AppError("Todo not found", 404));
   }
 
-  const isOwner = existingTodo.owner?._id
-    ? existingTodo.owner._id.toString() === req.user._id.toString()
-    : existingTodo.owner?.toString() === req.user._id.toString();
+  const isOwner = existingTodo.created_by?._id
+    ? existingTodo.created_by._id.toString() === req.user._id.toString()
+    : existingTodo.created_by?.toString() === req.user._id.toString();
 
   if (!isOwner && req.user.role !== "admin") {
     return next(new AppError("You do not have permission to update this todo", 403));
@@ -118,9 +118,9 @@ const deleteTodo = catchAsync(async (req, res, next) => {
     return next(new AppError("Todo not found", 404));
   }
 
-  const isOwner = existingTodo.owner?._id
-    ? existingTodo.owner._id.toString() === req.user._id.toString()
-    : existingTodo.owner?.toString() === req.user._id.toString();
+  const isOwner = existingTodo.created_by?._id
+    ? existingTodo.created_by._id.toString() === req.user._id.toString()
+    : existingTodo.created_by?.toString() === req.user._id.toString();
 
   if (!isOwner && req.user.role !== "admin") {
     return next(new AppError("You do not have permission to delete this todo", 403));
